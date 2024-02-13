@@ -9,4 +9,13 @@ UI_COMMAND_PROMPT = """
 5 - Выход
 """
 
+ADD_ENTRY_PROMTS = {
+    'name': "Введите имя: ",
+    'second_name': "Введите отчество: ",
+    'last_name': "Введите фамилию: ",
+    'employee': "Введите место работы: ",
+    'work_phone': "Введите рабочий телефон: ",
+    'mobile_phone': "Введите мобильный телефон: ",
+}
+
 UI_COMMAND_QUIT = 5
