@@ -19,6 +19,8 @@ class UI:
             self.command = ShowCommand()
         elif self.input == 2:
             self.command = AddCommand()
+        elif self.input == 3:
+            self.command = EditCommand()
         elif self.input == 4:
             self.command = SearchCommand()
         elif self.input == 5:
@@ -120,3 +122,33 @@ class SearchCommand(Command, TableMixin):
         if EntryMatcher(entry).match(filters, eq_contains, and_or)
     ]
         self.render_table(filtered_entries)
+
+class EditCommand(Command, TableMixin):
+    def render(self):
+        id: str = input(consts.UI_EDIT_ENTRY_ID_PROMPT)
+        raw_entries: list[str] = read_all_entries()
+        all_entries: list[PhoneBookEntry] = [
+        PhoneBookEntry().from_string(raw_entry) for raw_entry in raw_entries
+        ]
+        entry_to_edit_idx: int = None
+        for index, entry in enumerate(all_entries):
+            if entry.id == id:
+                entry_to_edit_idx = index
+        self.render_table([all_entries[entry_to_edit_idx]])
+
+        edit_choices: str = input(consts.UI_EDIT_ENTRY_PROMPT)
+        if len(edit_choices) > 1:
+            choices = edit_choices.split(' ')
+        else:
+            choices = [edit_choices]
+        
+        for choice in choices:
+            new_value = input(consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS[choice])
+            setattr(all_entries[entry_to_edit_idx], consts.UI_EDIT_MAPPING[choice], new_value)
+            while not all_entries[entry_to_edit_idx].validate_field(consts.UI_EDIT_MAPPING[choice]):
+                print('Неправильный формат поля, введите снова')
+                new_value = input(consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS[choice])
+                setattr(all_entries[entry_to_edit_idx], consts.UI_EDIT_MAPPING[choice], new_value)
+
+        with open('phonebook.txt', 'w') as file:
+            file.writelines([entry.to_string() for entry in all_entries])
