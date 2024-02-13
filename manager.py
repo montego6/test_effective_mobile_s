@@ -28,3 +28,7 @@ def read_all_entries() -> list[str]:
     """
     with open('phonebook.txt', "r") as file:
         return file.readlines()
+    
+def write_all_entries(entries):
+    with open('phonebook.txt', 'w') as file:
+        file.writelines([entry.to_string() for entry in entries])

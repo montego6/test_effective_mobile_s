@@ -1,6 +1,6 @@
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import consts
-from manager import add_entry_to_file, get_last_id, read_all_entries
+from manager import add_entry_to_file, get_last_id, read_all_entries, write_all_entries
 from matcher import EntryMatcher
 from model import PhoneBookEntry
 from rich.table import Table
@@ -12,19 +12,21 @@ class UI:
         self.command = None
     
     def get_next_command(self):
-        self.input = int(input(consts.UI_COMMAND_PROMPT))
+        self.input = input(consts.UI_COMMAND_PROMPT)
 
     def command_handler(self):
-        if self.input == 1:
+        if self.input == '1':
             self.command = ShowCommand()
-        elif self.input == 2:
+        elif self.input == '2':
             self.command = AddCommand()
-        elif self.input == 3:
+        elif self.input == '3':
             self.command = EditCommand()
-        elif self.input == 4:
+        elif self.input == '4':
             self.command = SearchCommand()
-        elif self.input == 5:
+        elif self.input == '5':
             self.command = QuitCommand()
+        else:
+            self.command = NotFoundCommand()
         self.command.render()
 
 
@@ -38,6 +40,10 @@ class QuitCommand(Command):
     def render(self):
         pass
 
+class NotFoundCommand(Command):
+    def render(self):
+        print('Неправильный ввод команды')
+
 
 class AddCommand(Command):
     def render(self):
@@ -46,7 +52,7 @@ class AddCommand(Command):
             value = input(consts.ADD_ENTRY_PROMTS[field])
             setattr(entry, field, value)
             while not entry.validate_field(field):
-                print('Invalid format, try again')
+                print('Неправильный формат, повторите ввод')
                 value = input(consts.ADD_ENTRY_PROMTS[field])
                 setattr(entry, field, value)
         setattr(entry, 'id', str(get_last_id() + 1))
@@ -69,7 +75,7 @@ class ShowCommand(Command, TableMixin):
         page = 1
         prompt = ''
         choice = None
-        while choice != 9:
+        while choice != '9':
             page_data = data[(page-1)*consts.PAGE_COUNT:page*consts.PAGE_COUNT]
             other_data = data[page*consts.PAGE_COUNT:]
             if other_data:
@@ -82,15 +88,19 @@ class ShowCommand(Command, TableMixin):
             prompt += '\n'
             page_entries = [PhoneBookEntry().from_string(line) for line in page_data]
             self.render_table(page_entries)
-            choice = int(input(prompt))
+            choice = input(prompt)
             prompt = ''
-            if choice == 1:
+            if choice == '1':
                 if other_data:
                     page += 1
-            elif choice == 2:
+            elif choice == '2':
                 if page > 1:
                     page -= 1
-
+            elif choice == '9':
+                pass
+            else:
+                print('Неправильный ввод команды')
+                
     
 
 
@@ -130,11 +140,11 @@ class EditCommand(Command, TableMixin):
         all_entries: list[PhoneBookEntry] = [
         PhoneBookEntry().from_string(raw_entry) for raw_entry in raw_entries
         ]
-        entry_to_edit_idx: int = None
-        for index, entry in enumerate(all_entries):
+        entry_to_edit: int = PhoneBookEntry
+        for entry in enumerate(all_entries):
             if entry.id == id:
-                entry_to_edit_idx = index
-        self.render_table([all_entries[entry_to_edit_idx]])
+                entry_to_edit = entry
+        self.render_table([entry_to_edit])
 
         edit_choices: str = input(consts.UI_EDIT_ENTRY_PROMPT)
         if len(edit_choices) > 1:
@@ -144,11 +154,10 @@ class EditCommand(Command, TableMixin):
         
         for choice in choices:
             new_value = input(consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS[choice])
-            setattr(all_entries[entry_to_edit_idx], consts.UI_EDIT_MAPPING[choice], new_value)
-            while not all_entries[entry_to_edit_idx].validate_field(consts.UI_EDIT_MAPPING[choice]):
+            setattr(entry_to_edit, consts.UI_EDIT_MAPPING[choice], new_value)
+            while not entry_to_edit.validate_field(consts.UI_EDIT_MAPPING[choice]):
                 print('Неправильный формат поля, введите снова')
                 new_value = input(consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS[choice])
-                setattr(all_entries[entry_to_edit_idx], consts.UI_EDIT_MAPPING[choice], new_value)
+                setattr(entry_to_edit, consts.UI_EDIT_MAPPING[choice], new_value)
 
-        with open('phonebook.txt', 'w') as file:
-            file.writelines([entry.to_string() for entry in all_entries])
+        write_all_entries(all_entries)

@@ -98,4 +98,4 @@ ADD_ENTRY_PROMTS = {
 
 TABLE_HEADER = ['id', 'Имя', 'Отчество', 'Фамилия', 'Место работы', 'Рабочий телефон', 'Личный телефон']
 
-UI_COMMAND_QUIT = 5
+UI_COMMAND_QUIT = '5'
