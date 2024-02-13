@@ -1,5 +1,7 @@
 TEXTFILE_SEPARATOR = '|'
 
+PAGE_COUNT = 5
+
 UI_COMMAND_PROMPT = """
 Выберите следующую комманду:
 1 - Вывод записей справочника
@@ -9,6 +11,11 @@ UI_COMMAND_PROMPT = """
 5 - Выход
 """
 
+UI_SHOW_COMMAND_PROMPT_NEXT_PAGE  = '1 - Следующая страница'
+UI_SHOW_COMMAND_PROMPT_PREV_PAGE  = '2 - Предыдущая страница'
+UI_SHOW_COMMAND_PROMPT_QUIT  = '9 - Выход в основное меню'
+
+
 ADD_ENTRY_PROMTS = {
     'name': "Введите имя: ",
     'second_name': "Введите отчество: ",
@@ -17,5 +24,7 @@ ADD_ENTRY_PROMTS = {
     'work_phone': "Введите рабочий телефон: ",
     'mobile_phone': "Введите мобильный телефон: ",
 }
+
+TABLE_HEADER = ['id', 'Имя', 'Отчество', 'Фамилия', 'Место работы', 'Рабочий телефон', 'Личный телефон']
 
 UI_COMMAND_QUIT = 5

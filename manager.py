@@ -21,3 +21,10 @@ def add_entry_to_file(entry: PhoneBookEntry) -> None:
     """
     with open('phonebook.txt', "a") as file:
         file.write(entry.to_string())
+
+def read_all_entries() -> list[str]:
+    """
+    Get all entries from a file
+    """
+    with open('phonebook.txt', "r") as file:
+        return file.readlines()
