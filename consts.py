@@ -11,6 +11,47 @@ UI_COMMAND_PROMPT = """
 5 - Выход
 """
 
+UI_SEARCH_ENTRIES_PROMPT = """
+Выберите атрибуты для поиска(если несколько, то через пробел):
+1 - id
+2 - Имя
+3 - Отчество
+4 - Фамилия
+5 - Место работы
+6 - Рабочий телефон
+7 - Личный телефон
+"""
+
+UI_SEARCH_ENTRIES_FILTER_PROMTS = {
+    '1': "Введите id",
+    '2': "Введите имя: ",
+    '3': "Введите отчество: ",
+    '4': "Введите фамилию: ",
+    '5': "Введите место работы: ",
+    '6': "Введите рабочий телефон: ",
+    '7': "Введите мобильный телефон: ",
+}
+
+UI_FILTERS_MAPPING = {
+    '1': 'id',
+    '2': 'name',
+    '3': 'second_name',
+    '4': 'last_name',
+    '5': 'employee',
+    '6': 'work_phone',
+    '7': 'mobile_phone'
+}
+
+UI_SEARCH_ENTRIES_EQ_CONTAINS_PROMPT = """
+1 - Полное совпадение
+2 - Частичное совпадение
+"""
+
+UI_SEARCH_ENTRIES_AND_OR_PROMPT = """
+1 - Совпадение всех полей
+2 - Совпадение любого поля
+"""
+
 UI_SHOW_COMMAND_PROMPT_NEXT_PAGE  = '1 - Следующая страница'
 UI_SHOW_COMMAND_PROMPT_PREV_PAGE  = '2 - Предыдущая страница'
 UI_SHOW_COMMAND_PROMPT_QUIT  = '9 - Выход в основное меню'
