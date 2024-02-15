@@ -57,6 +57,7 @@ class AddCommand(Command):
                 setattr(entry, field, value)
         setattr(entry, 'id', str(get_last_id() + 1))
         add_entry_to_file(entry)
+        print('Запись успешно добавлена')
 
 
 class TableMixin:
@@ -108,30 +109,35 @@ class SearchCommand(Command, TableMixin):
     def render(self):
         search_choices = input(consts.UI_SEARCH_ENTRIES_PROMPT)
         if len(search_choices) > 1:
-            choices = search_choices.split(' ')
+            choices = search_choices.split()
         else:
             choices = [search_choices]
 
-        filters = [(consts.UI_FILTERS_MAPPING[choice], input(consts.UI_SEARCH_ENTRIES_FILTER_PROMTS[choice])) for choice in choices]
+        for choice in choices:
+            if choice not in consts.UI_FILTERS_MAPPING.keys():
+                print('Неверно указан атрибут для поиска')
+                break
+        else:
+            filters = [(consts.UI_FILTERS_MAPPING[choice], input(consts.UI_SEARCH_ENTRIES_FILTER_PROMTS[choice])) for choice in choices]
 
-        while (eq_contains_choice := input(consts.UI_SEARCH_ENTRIES_EQ_CONTAINS_PROMPT)) not in ['1', '2']:
-            print('Выберите 1 или 2')
-        eq_contains = True if eq_contains_choice == 1 else False
+            while (eq_contains_choice := input(consts.UI_SEARCH_ENTRIES_EQ_CONTAINS_PROMPT)) not in ['1', '2']:
+                print('Выберите 1 или 2')
+            eq_contains = True if eq_contains_choice == 1 else False
 
-        while (and_or_choice := input(consts.UI_SEARCH_ENTRIES_AND_OR_PROMPT)) not in ['1', '2']:
-            print('Выберите 1 или 2')
-        and_or = True if and_or_choice == 1 else False
+            while (and_or_choice := input(consts.UI_SEARCH_ENTRIES_AND_OR_PROMPT)) not in ['1', '2']:
+                print('Выберите 1 или 2')
+            and_or = True if and_or_choice == 1 else False
 
-        raw_entries: list[str] = read_all_entries()
-        all_entries: list[PhoneBookEntry] = [
-        PhoneBookEntry().from_string(raw_entry) for raw_entry in raw_entries
+            raw_entries: list[str] = read_all_entries()
+            all_entries: list[PhoneBookEntry] = [
+            PhoneBookEntry().from_string(raw_entry) for raw_entry in raw_entries
+            ]
+            filtered_entries =  [
+            entry
+            for entry in all_entries
+            if EntryMatcher(entry).match(filters, eq_contains, and_or)
         ]
-        filtered_entries =  [
-        entry
-        for entry in all_entries
-        if EntryMatcher(entry).match(filters, eq_contains, and_or)
-    ]
-        self.render_table(filtered_entries)
+            self.render_table(filtered_entries)
 
 class EditCommand(Command, TableMixin):
     def render(self):
@@ -140,24 +146,32 @@ class EditCommand(Command, TableMixin):
         all_entries: list[PhoneBookEntry] = [
         PhoneBookEntry().from_string(raw_entry) for raw_entry in raw_entries
         ]
-        entry_to_edit: int = PhoneBookEntry
-        for entry in enumerate(all_entries):
+        entry_to_edit: PhoneBookEntry = None
+        for entry in all_entries:
             if entry.id == id:
                 entry_to_edit = entry
-        self.render_table([entry_to_edit])
-
-        edit_choices: str = input(consts.UI_EDIT_ENTRY_PROMPT)
-        if len(edit_choices) > 1:
-            choices = edit_choices.split(' ')
+        if not entry_to_edit:
+            print('Записи с таким id не существует')
         else:
-            choices = [edit_choices]
-        
-        for choice in choices:
-            new_value = input(consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS[choice])
-            setattr(entry_to_edit, consts.UI_EDIT_MAPPING[choice], new_value)
-            while not entry_to_edit.validate_field(consts.UI_EDIT_MAPPING[choice]):
-                print('Неправильный формат поля, введите снова')
-                new_value = input(consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS[choice])
-                setattr(entry_to_edit, consts.UI_EDIT_MAPPING[choice], new_value)
+            self.render_table([entry_to_edit])
 
-        write_all_entries(all_entries)
+            edit_choices: str = input(consts.UI_EDIT_ENTRY_PROMPT)
+            if len(edit_choices) > 1:
+                choices = edit_choices.split()
+            else:
+                choices = [edit_choices]
+            
+            for choice in choices:
+                if choice not in consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS.keys():
+                    print('Неверно указан номер атрибута')
+                    break
+            else:
+                for choice in choices:
+                    new_value = input(consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS[choice])
+                    setattr(entry_to_edit, consts.UI_EDIT_MAPPING[choice], new_value)
+                    while not entry_to_edit.validate_field(consts.UI_EDIT_MAPPING[choice]):
+                        print('Неправильный формат поля, введите снова')
+                        new_value = input(consts.UI_EDIT_ENTRY_NEW_VALUE_PROMTS[choice])
+                        setattr(entry_to_edit, consts.UI_EDIT_MAPPING[choice], new_value)
+                print('Запись успешно отредактирована')
+                write_all_entries(all_entries)
