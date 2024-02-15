@@ -98,4 +98,12 @@ ADD_ENTRY_PROMTS = {
 
 TABLE_HEADER = ['id', 'Имя', 'Отчество', 'Фамилия', 'Место работы', 'Рабочий телефон', 'Личный телефон']
 
+UI_COMMAND_SHOW = '1'
+UI_COMMAND_ADD = '2'
+UI_COMMAND_EDIT = '3'
+UI_COMMAND_SEARCH = '4'
 UI_COMMAND_QUIT = '5'
+
+UI_SHOW_COMMAND_NEXT_PAGE = '1'
+UI_SHOW_COMMAND_PREV_PAGE = '2'
+UI_SHOW_COMMAND_EXIT = '9'

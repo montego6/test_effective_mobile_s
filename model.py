@@ -7,12 +7,12 @@ import consts
 Regex validators for our model fields
 """
 validators: dict[str, str] = {
-    'name': r"^([А-Я]?[а-я]+)|([A-Z]?[a-z]+)$",
-    'second_name': r"^([А-Я]?[а-я]+)|([A-Z]?[a-z]+)$",
-    'last_name': r"^([А-Я]?[а-я]+)|([A-Z]?[a-z]+)$",
-    'employee': r"^([А-Я]?[а-я]+)|([A-Z]?[a-z]+)$",
-    'work_phone': r"^((\+\s?7)|8)\s?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}$",
-    'mobile_phone': r"^((\+\s?7)|8)\s?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}$",
+    "name": r"^([А-Я]?[а-я]+)|([A-Z]?[a-z]+)$",
+    "second_name": r"^([А-Я]?[а-я]+)|([A-Z]?[a-z]+)$",
+    "last_name": r"^([А-Я]?[а-я]+)|([A-Z]?[a-z]+)$",
+    "employee": r"^([А-Я]?[а-я]+)|([A-Z]?[a-z]+)$",
+    "work_phone": r"^((\+\s?7)|8)\s?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}$",
+    "mobile_phone": r"^((\+\s?7)|8)\s?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}$",
 }
 
 
